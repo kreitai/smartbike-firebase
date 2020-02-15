@@ -67,3 +67,5 @@ node_modules/
 #credentials, etc.
 .firebaserc
 functions/key.json
+functions/db-url.json
+functions/test/test_config.json

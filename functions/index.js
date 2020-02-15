@@ -4,23 +4,27 @@ const adminKey = require('./key.json')
 
 admin.initializeApp({
     credential: admin.credential.cert(adminKey)
-  })
+})
 
-exports.sendAdminNotification = functions.database.ref('/stations').onWrite(event => {    
+exports.sendAdminNotification = functions.database.ref('/stations').onWrite((change, context) => {
 
-    const payload = {notification: {
-        title: 'Test',
-        body: 'Test'
+    var payload = {
+        notification: {
+            title: 'Test',
+            body: 'Test'
         }
     };
 
-    return admin.messaging().sendToTopic("/topics/station_status",payload)
-    .then((response) => {
-         console.log('Notification sent successfully:',response);
-         return 0
-    }) 
-    .catch((error) => {
-         console.log('Notification send failed:',error);
-    });
-    
+    const newData = change.after.val();
+    console.log('New data:', newData);
+
+    return admin.messaging().sendToTopic("/topics/station_status", payload)
+        .then((response) => {
+            console.log('Notification sent successfully:', response);
+            return 0
+        })
+        .catch((error) => {
+            console.log('Notification send failed:', error);
+        });
+
 })
